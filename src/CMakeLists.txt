@@ -64,7 +64,7 @@ else()
 
     # libarchive 3 is necessary
     if(NOT APPLE)
-        find_package(LibArchive 3 REQUIRED)
+        # find_package(LibArchive 3 REQUIRED)
 
     # macOS with custom-built libarchive
     elseif(EXISTS "${OSX_LIBARCHIVE_PATH}" OR INSTALL_LIBARCHIVE)
@@ -133,11 +133,11 @@ else()
 
     # Locating packages
     find_package(LibXml2 REQUIRED)
-    find_package(CURL REQUIRED)
+    # find_package(CURL REQUIRED)
     find_package(Iconv REQUIRED)
     set(Boost_NO_BOOST_CMAKE ON)
     set(Boost_USE_STATIC_LIBS ON)
-    find_package(Boost COMPONENTS REQUIRED)
+    # find_package(Boost COMPONENTS REQUIRED)
 
     # add include directories
     include_directories(${LibArchive_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${Iconv_INCLUDE_DIRS} ${LibArchive_INCLUDE_DIR} ${LIBXML2_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
