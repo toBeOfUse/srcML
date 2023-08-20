@@ -101,12 +101,12 @@ if(NOT APPLE)
     set_target_properties(libsrcml_shared PROPERTIES LINK_FLAGS_RELEASE -s)
 endif()
 
-if(APPLE)
-    add_custom_command(TARGET libsrcml_static POST_BUILD
-        COMMAND /usr/bin/strip -ur ${CMAKE_BINARY_DIR}/bin/libsrcml.a
-        COMMAND ${CMAKE_COMMAND} -E echo "-- Stripping bin/libsrcml.a")
-elseif(NOT WIN32)
-    add_custom_command(TARGET libsrcml_static POST_BUILD
-        COMMAND /usr/bin/strip ${CMAKE_BINARY_DIR}/bin/libsrcml.a
-        COMMAND ${CMAKE_COMMAND} -E echo "-- Stripping bin/libsrcml.a")
-endif()
+# if(APPLE)
+#     add_custom_command(TARGET libsrcml_static POST_BUILD
+#         COMMAND /usr/bin/strip -ur ${CMAKE_BINARY_DIR}/bin/libsrcml.a
+#         COMMAND ${CMAKE_COMMAND} -E echo "-- Stripping bin/libsrcml.a")
+# elseif(NOT WIN32)
+#     add_custom_command(TARGET libsrcml_static POST_BUILD
+#         COMMAND /usr/bin/strip ${CMAKE_BINARY_DIR}/bin/libsrcml.a
+#         COMMAND ${CMAKE_COMMAND} -E echo "-- Stripping bin/libsrcml.a")
+# endif()
