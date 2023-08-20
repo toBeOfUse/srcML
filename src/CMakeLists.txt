@@ -173,7 +173,7 @@ if(${CMAKE_COMPILER_IS_GNUCXX})
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 
     add_compile_options(
-        -fPIC -Wno-long-long -Wall -Wextra -Wshorten-64-to-32 -Wno-unknown-pragmas -Wno-int-to-void-pointer-cast
+        -fPIC -Wno-long-long -Wall -Wextra -Wshorten-64-to-32 -Wno-unknown-pragmas -Wno-int-to-void-pointer-cast -fwasm-exceptions
     )
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
