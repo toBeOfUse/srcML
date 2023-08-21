@@ -173,7 +173,7 @@ if(${CMAKE_COMPILER_IS_GNUCXX})
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 
     add_compile_options(
-        -fPIC -Wno-long-long -Wall -Wextra -Wshorten-64-to-32 -Wno-unknown-pragmas -Wno-int-to-void-pointer-cast -fwasm-exceptions
+        -fPIC -Wno-long-long -Wall -Wextra -Wshorten-64-to-32 -Wno-unknown-pragmas -Wno-int-to-void-pointer-cast
     )
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
@@ -188,6 +188,10 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
 else()
     message(FATAL_ERROR "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}. Build not configured for selected compiler.")
+endif()
+
+if(EMSCRIPTEN)
+    add_compile_options(-fexceptions)
 endif()
 
 add_subdirectory(parser)
