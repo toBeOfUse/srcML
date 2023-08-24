@@ -79,7 +79,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Dynamic Load libraries (Unix only)
-if(NOT WIN32)
+if(NOT WIN32 AND NOT EMPSCRIPTEN)
     option(DYNAMIC_LOAD_ENABLED "Dynamically load some libraries such as libxslt and libexslt" ON)
 endif()
 
