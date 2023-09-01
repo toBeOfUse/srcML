@@ -76,25 +76,27 @@ set_target_properties(libsrcml_static PROPERTIES
 target_include_directories(libsrcml_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(libsrcml_static PRIVATE LibXml2::LibXml2 Iconv::Iconv LibXslt::LibXslt LibXslt::LibExslt)
 
-# Building shared library for srcML
-add_library(libsrcml_shared SHARED)
-set_target_properties(libsrcml_shared PROPERTIES
-    POSITION_INDEPENDENT_CODE ON
+if (BUILD_SHARED_LIBS)
+    # Building shared library for srcML
+    add_library(libsrcml_shared SHARED)
+    set_target_properties(libsrcml_shared PROPERTIES
+        POSITION_INDEPENDENT_CODE ON
 
-    # All of these are not needed on Unix, but are needed on Windows
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        # All of these are not needed on Unix, but are needed on Windows
+        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 
-    VERSION "${PROJECT_VERSION}"
-    SOVERSION "${PROJECT_VERSION_MAJOR}"
+        VERSION "${PROJECT_VERSION}"
+        SOVERSION "${PROJECT_VERSION_MAJOR}"
 
-    CXX_VISIBILITY_PRESET hidden
-    C_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN ON
-)
-target_link_libraries(libsrcml_shared PRIVATE libsrcml parser antlr)
-target_include_directories(libsrcml_shared PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+        CXX_VISIBILITY_PRESET hidden
+        C_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN ON
+    )
+    target_link_libraries(libsrcml_shared PRIVATE libsrcml parser antlr)
+    target_include_directories(libsrcml_shared PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+endif()
 
 if(WIN32)
     set(SRCML_LIBSRCML_SHARED_OUTPUT_NAME "libsrcml")
@@ -103,7 +105,9 @@ else()
     set(SRCML_LIBSRCML_SHARED_OUTPUT_NAME "srcml")
     set(SRCML_LIBSRCML_STATIC_OUTPUT_NAME "srcml")
 endif()
-set_target_properties(libsrcml_shared PROPERTIES OUTPUT_NAME "${SRCML_LIBSRCML_SHARED_OUTPUT_NAME}")
+if(BUILD_SHARED_LIBS)
+    set_target_properties(libsrcml_shared PROPERTIES OUTPUT_NAME "${SRCML_LIBSRCML_SHARED_OUTPUT_NAME}")
+endif()
 set_target_properties(libsrcml_static PROPERTIES OUTPUT_NAME "${SRCML_LIBSRCML_STATIC_OUTPUT_NAME}")
 
 if(DEFINED SRCML_LIBSRCML_SHARED_LINK_FLAGS_RELEASE)
@@ -115,7 +119,10 @@ if(DEFINED SRCML_LIBSRCML_STATIC_LINK_FLAGS_RELEASE)
 endif()
 
 # Apply preset linker flags for libsrcml
-set_target_properties(libsrcml_shared libsrcml_static PROPERTIES LINK_FLAGS "${SRCML_LIBSRCML_LINK_FLAGS}")
+if(BUILD_SHARED_LIBS)
+    set_target_properties(libsrcml_shared PROPERTIES LINK_FLAGS "${SRCML_LIBSRCML_LINK_FLAGS}")
+endif()
+set_target_properties(libsrcml_static PROPERTIES LINK_FLAGS "${SRCML_LIBSRCML_LINK_FLAGS}")
 
 # PreCompiled Headers configuration of libsrcml
 if (SRCML_LIBSRCML_PCH)
@@ -124,12 +131,14 @@ if (SRCML_LIBSRCML_PCH)
 endif()
 
 # which types of libraries
-if(WIN32)
-    # libsrcml shared
-    install(TARGETS libsrcml_shared EXPORT libsrcml_shared_Targets RUNTIME COMPONENT SRCML ARCHIVE COMPONENT DEVLIBS)
-    install(FILES $<TARGET_PDB_FILE:libsrcml_shared> DESTINATION bin OPTIONAL COMPONENT DEVLIBS)
-else()
-    install(TARGETS libsrcml_shared EXPORT libsrcml_shared_Targets LIBRARY COMPONENT SRCML NAMELINK_COMPONENT DEVLIBS)
+if(BUILD_SHARED_LIBS)
+    if(WIN32)
+        # libsrcml shared
+        install(TARGETS libsrcml_shared EXPORT libsrcml_shared_Targets RUNTIME COMPONENT SRCML ARCHIVE COMPONENT DEVLIBS)
+        install(FILES $<TARGET_PDB_FILE:libsrcml_shared> DESTINATION bin OPTIONAL COMPONENT DEVLIBS)
+    else()
+        install(TARGETS libsrcml_shared EXPORT libsrcml_shared_Targets LIBRARY COMPONENT SRCML NAMELINK_COMPONENT DEVLIBS)
+    endif()
 endif()
 
 include(CMakePackageConfigHelpers)
@@ -137,11 +146,13 @@ include(CMakePackageConfigHelpers)
 # directory to put the config files
 set(CONFIG_FILE_DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/srcml")
 
-install(EXPORT libsrcml_shared_Targets
-        DESTINATION "${CONFIG_FILE_DESTINATION}"
-        NAMESPACE srcML::
-        FILE srcML-shared-targets.cmake
-        COMPONENT DEVLIBS)
+if(BUILD_SHARED_LIBS)
+    install(EXPORT libsrcml_shared_Targets
+            DESTINATION "${CONFIG_FILE_DESTINATION}"
+            NAMESPACE srcML::
+            FILE srcML-shared-targets.cmake
+            COMPONENT DEVLIBS)
+endif()
 
 configure_package_config_file(
     ${CMAKE_SOURCE_DIR}/srcMLConfig.cmake.in ${CMAKE_BINARY_DIR}/srcMLConfig.cmake
