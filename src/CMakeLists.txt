@@ -191,7 +191,7 @@ else()
 endif()
 
 if(EMSCRIPTEN)
-    add_compile_options(-fexceptions)
+    add_compile_options(-fexceptions -pthread)
 endif()
 
 add_subdirectory(parser)
