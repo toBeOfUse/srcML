@@ -33,6 +33,17 @@ message("CMAKE_OSX_ARCHITECTURES: ${CMAKE_OSX_ARCHITECTURES}")
 # Merge all object code into one object file to build static library from
 # Use this to build static library as it 1) hides filenames 2) hides symbols that are internal only
 set(LIBSRCML_OBJECTS $<TARGET_OBJECTS:libsrcml> $<TARGET_OBJECTS:parser> $<TARGET_OBJECTS:antlr>)
+add_library(libsrcml_static STATIC ${LIBSRCML_OBJECTS})
+set_target_properties(libsrcml_static PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    POSITION_INDEPENDENT_CODE ON
+    LINKER_LANGUAGE CXX
+    CXX_VISIBILITY_PRESET hidden
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+)
+target_include_directories(libsrcml_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_link_libraries(libsrcml_static PRIVATE LibXml2::LibXml2 Iconv::Iconv LibXslt::LibXslt LibXslt::LibExslt)
 if(NOT MSVC)
     set(LIBSRCML_OBJECT_FILENAME libsrcml${CMAKE_CXX_OUTPUT_EXTENSION})
 
@@ -53,6 +64,41 @@ if(NOT MSVC)
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
         )
+
+        # get list of exports by iterating over export_list_emscripten, skipping
+        # lines that start with #
+        set(EXPORTS "")
+        file(READ "export_list_emscripten" FILE_CONTENT)
+        string(REGEX REPLACE "\n" ";" FILE_LINES "${FILE_CONTENT}")
+        foreach(line ${FILE_LINES})
+            string(REGEX MATCH "^#" is_comment "${line}")
+            if (NOT is_comment)
+                string(APPEND EXPORTS "${line},")
+            endif()
+        endforeach()
+        # remove trailing comma
+        string(REGEX REPLACE ",$" "" EXPORTS "${EXPORTS}")
+
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            add_compile_options(-O0 -gseparate-dwarf=libsrcml.wasm.dwp)
+        else()
+            add_compile_options(-O3)
+        endif()
+
+        add_custom_command(
+          TARGET libsrcml_static
+          POST_BUILD
+          COMMAND emcc ${CMAKE_BINARY_DIR}/bin/libsrcml.a $<TARGET_FILE:LibXml2::LibXml2>
+                $<TARGET_FILE:LibXslt::LibXslt> $<TARGET_FILE:LibXslt::LibExslt>
+            -o ${CMAKE_BINARY_DIR}/libsrcml.js
+            -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
+            -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
+            -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=2
+            -sEXPORT_ES6=1 -sMODULARIZE=1 -g2
+          DEPENDS libsrcml parser antlr
+          COMMAND_EXPAND_LISTS
+        )
+
     else()
         add_custom_command(
           OUTPUT ${LIBSRCML_OBJECT_FILENAME}
@@ -64,17 +110,6 @@ if(NOT MSVC)
 
     set(LIBSRCML_OBJECTS ${LIBSRCML_OBJECT_FILENAME})
 endif()
-add_library(libsrcml_static STATIC ${LIBSRCML_OBJECTS})
-set_target_properties(libsrcml_static PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-    POSITION_INDEPENDENT_CODE ON
-    LINKER_LANGUAGE CXX
-    CXX_VISIBILITY_PRESET hidden
-    C_VISIBILITY_PRESET hidden
-    VISIBILITY_INLINES_HIDDEN ON
-)
-target_include_directories(libsrcml_static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-target_link_libraries(libsrcml_static PRIVATE LibXml2::LibXml2 Iconv::Iconv LibXslt::LibXslt LibXslt::LibExslt)
 
 if (BUILD_SHARED_LIBS)
     # Building shared library for srcML
