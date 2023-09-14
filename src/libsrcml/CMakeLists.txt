@@ -80,9 +80,9 @@ if(NOT MSVC)
         string(REGEX REPLACE ",$" "" EXPORTS "${EXPORTS}")
 
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-            add_compile_options(-O0 -gseparate-dwarf=libsrcml.wasm.dwp)
+            set(WASM_OPTIONS -O0 -gseparate-dwarf=${CMAKE_BINARY_DIR}/libsrcml.wasm.dwp)
         else()
-            add_compile_options(-O3)
+            set(WASM_OPTIONS -O3)
         endif()
 
         add_custom_command(
@@ -94,7 +94,7 @@ if(NOT MSVC)
             -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
             -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
             -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=2
-            -sEXPORT_ES6=1 -sMODULARIZE=1 -g2
+            -sEXPORT_ES6=1 -sMODULARIZE=1 -g2 ${WASM_OPTIONS}
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
         )
