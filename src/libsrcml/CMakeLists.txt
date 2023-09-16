@@ -58,6 +58,8 @@ if(NOT MSVC)
           COMMAND_EXPAND_LISTS
         )
     elseif(EMSCRIPTEN)
+        add_compile_options(-fexceptions -pthread)
+
         add_custom_command(
           OUTPUT ${LIBSRCML_OBJECT_FILENAME}
           COMMAND emcc -r ${LIBSRCML_OBJECTS} -o ${LIBSRCML_OBJECT_FILENAME}
@@ -98,7 +100,6 @@ if(NOT MSVC)
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
         )
-
     else()
         add_custom_command(
           OUTPUT ${LIBSRCML_OBJECT_FILENAME}
