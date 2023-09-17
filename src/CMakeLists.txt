@@ -23,6 +23,11 @@ option(BUILD_LIBSRCML "Build (and potentially install) libsrcml" ON)
 add_compile_options(${SRCML_GLOBAL_COMPILE_OPTIONS})
 add_link_options("${SRCML_GLOBAL_LINK_OPTIONS}")
 
+if (EMSCRIPTEN)
+    # TODO: put these options somewhere else, like CMakePresets.json
+    add_compile_options(-fexceptions -pthread)
+endif()
+
 # if(BUILD_LIBSRCML)
     add_subdirectory(parser)
     add_subdirectory(libsrcml)
