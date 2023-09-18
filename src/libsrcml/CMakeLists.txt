@@ -58,6 +58,8 @@ if(NOT MSVC)
           COMMAND_EXPAND_LISTS
         )
     elseif(EMSCRIPTEN)
+        option(EMSCRIPTEN_TARGET "Target 'NODE' or 'BROWSER'" BROWSER)
+
         add_custom_command(
           OUTPUT ${LIBSRCML_OBJECT_FILENAME}
           COMMAND emcc -r ${LIBSRCML_OBJECTS} -o ${LIBSRCML_OBJECT_FILENAME}
@@ -85,6 +87,12 @@ if(NOT MSVC)
             set(WASM_OPTIONS -O3)
         endif()
 
+        if (EMSCRIPTEN_TARGET STREQUAL "NODE")
+            set(WASM_OPTIONS ${WASM_OPTIONS} -sNODERAWFS=1 -sENVIRONMENT=worker,node)
+        else()
+            set(WASM_OPTIONS ${WASM_OPTIONS} -sENVIRONMENT=worker,web)
+        endif()
+
         add_custom_command(
           TARGET libsrcml_static
           POST_BUILD
@@ -93,7 +101,7 @@ if(NOT MSVC)
             -o ${CMAKE_BINARY_DIR}/libsrcml.js
             -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
             -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
-            -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=2
+            -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=4
             -sEXPORT_ES6=1 -sMODULARIZE=1 -g2 ${WASM_OPTIONS}
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
