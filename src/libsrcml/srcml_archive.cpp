@@ -1354,5 +1354,10 @@ void srcml_archive_close(struct srcml_archive* archive) {
         (*archive->buffer) = (char *) xmlBufferDetach(archive->xbuffer);
     }
 
+    if (archive->reader) {
+        delete archive->reader;
+        archive->reader = nullptr;
+    }
+
     archive->type = SRCML_ARCHIVE_INVALID;
 }
