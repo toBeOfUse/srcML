@@ -89,7 +89,7 @@ if(NOT MSVC)
         endif()
 
         if (EMSCRIPTEN_TARGET STREQUAL "NODE")
-            set(WASM_OPTIONS ${WASM_OPTIONS} -sNODERAWFS=1 -sENVIRONMENT=worker,node)
+            set(WASM_OPTIONS ${WASM_OPTIONS} -sNODERAWFS=1 -sENVIRONMENT=worker,node -g2)
         else()
             set(WASM_OPTIONS ${WASM_OPTIONS} -sENVIRONMENT=worker,web)
         endif()
@@ -104,7 +104,7 @@ if(NOT MSVC)
             -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
             -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
             -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=1
-            -sEXPORT_ES6=1 -sMODULARIZE=1 -g2 ${WASM_OPTIONS}
+            -sEXPORT_ES6=1 -sMODULARIZE=1 ${WASM_OPTIONS}
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
         )
