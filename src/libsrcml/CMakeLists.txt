@@ -93,6 +93,7 @@ if(NOT MSVC)
             set(WASM_OPTIONS ${WASM_OPTIONS} -sENVIRONMENT=worker,web)
         endif()
 
+        # TODO: i think this possibly could be combined with the custom_command above
         add_custom_command(
           TARGET libsrcml_static
           POST_BUILD
@@ -101,7 +102,7 @@ if(NOT MSVC)
             -o ${CMAKE_BINARY_DIR}/libsrcml.js
             -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
             -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
-            -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=4
+            -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=1
             -sEXPORT_ES6=1 -sMODULARIZE=1 -g2 ${WASM_OPTIONS}
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
