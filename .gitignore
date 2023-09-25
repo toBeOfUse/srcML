@@ -4,12 +4,16 @@
 .\#*
 *.pyc
 .DS_Store
+*.o
 
 bin
 dist
 dep
 deps
 src/parser/PhaseOne.txt
+package
+parser
+_deps
 
 # cmake/ctest/cpack
 CMakeCache.txt
