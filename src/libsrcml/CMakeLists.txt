@@ -106,6 +106,7 @@ if(NOT MSVC)
             -sEXPORTED_FUNCTIONS=${EXPORTS},_malloc,_free
             -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue,UTF8ToString
             -fexceptions -sALLOW_MEMORY_GROWTH -pthread -sPTHREAD_POOL_SIZE=1
+            -sMAXIMUM_MEMORY=1073741824  # 1 gb. default is 2 gb which doesn't work on iOS Safari
             -sEXPORT_ES6=1 -sMODULARIZE=1 ${WASM_OPTIONS}
           DEPENDS libsrcml parser antlr
           COMMAND_EXPAND_LISTS
