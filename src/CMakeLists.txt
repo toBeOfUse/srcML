@@ -23,7 +23,7 @@ add_link_options("${SRCML_GLOBAL_LINK_OPTIONS}")
 
 if (EMSCRIPTEN)
     # TODO: put these options somewhere else, like CMakePresets.json
-    add_compile_options(-fexceptions -pthread)
+    add_compile_options(-fwasm-exceptions -pthread)
 endif()
 
 # if(BUILD_LIBSRCML)
