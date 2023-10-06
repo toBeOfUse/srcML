@@ -945,7 +945,7 @@ static int srcml_unit_unparse_internal(struct srcml_unit* unit, std::function<xm
     if (unit == nullptr)
         return SRCML_STATUS_INVALID_ARGUMENT;
 
-    if (unit->archive->type != SRCML_ARCHIVE_READ && unit->archive->type != SRCML_ARCHIVE_RW)
+    if (unit->archive->type != SRCML_ARCHIVE_READ && unit->archive->type != SRCML_ARCHIVE_RW && !unit->read_body)
         return SRCML_STATUS_INVALID_IO_OPERATION;
 
     if (!unit->read_body && !unit->read_header)
