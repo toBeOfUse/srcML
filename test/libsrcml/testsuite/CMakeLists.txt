@@ -6,6 +6,8 @@
 # 
 # CMake files for libsrcml tests
 
+find_package(Threads REQUIRED)
+
 # Build and add tests
 add_custom_target(build_libsrcml_tests)
 set(TEST_FILES "copy.xsl;setlanguage.xsl;schema.rng")
@@ -15,7 +17,7 @@ foreach(LIB_TEST IN ITEMS ${LIB_TESTS})
     # Create executable test
     get_filename_component(TEST_NAME ${LIB_TEST} NAME_WE)
     add_executable(${TEST_NAME} ${LIB_TEST})
-    target_link_libraries(${TEST_NAME} PRIVATE srcML::LibsrcML)
+    target_link_libraries(${TEST_NAME} PRIVATE srcML::LibsrcML Threads::Threads)
     set_target_properties(${TEST_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
     # Add the test
