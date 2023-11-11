@@ -1,5 +1,7 @@
 # based on the existing libsrcml/export_list.
 
+# libsrcml 1.0:
+
 # skipping file-oriented convenience functions:
 # _srcml
 # _srcml_check_extension
@@ -61,6 +63,12 @@
 # _srcml_archive_write_open_io
 # _srcml_archive_write_open_FILE
 
+# it was decided that srcDiff does not need to be present in the JavaScript
+# wrapper:
+# _srcml_archive_get_srcdiff_revision
+# _srcml_archive_set_srcdiff_revision
+
+
 _srcml_append_transform_param
 _srcml_append_transform_relaxng_filename
 _srcml_append_transform_relaxng_memory
@@ -102,7 +110,6 @@ _srcml_archive_get_prefix_from_uri
 _srcml_archive_get_src_encoding
 _srcml_archive_get_tabstop
 _srcml_archive_get_version
-_srcml_archive_get_srcdiff_revision
 _srcml_archive_register_file_extension
 _srcml_archive_register_namespace
 _srcml_archive_set_url
@@ -113,10 +120,11 @@ _srcml_archive_set_processing_instruction
 _srcml_archive_set_src_encoding
 _srcml_archive_set_tabstop
 _srcml_archive_set_version
-_srcml_archive_set_srcdiff_revision
 _srcml_check_encoding
+# just returns 1
 _srcml_check_exslt
 _srcml_check_language
+# just returns 1
 _srcml_check_xslt
 _srcml_cleanup_globals
 # this operates on archives, despite the name not indicating that:
@@ -130,8 +138,7 @@ _srcml_archive_close
 _srcml_archive_create
 _srcml_unit_create
 _srcml_unit_clone
-_srcml_unit_get_src
-_srcml_unit_get_src_size
+
 # the underlying properties for these also seem to be unused in libsrcml
 _srcml_unit_error_number
 _srcml_unit_error_string
@@ -180,3 +187,36 @@ _srcml_write_namespace
 _srcml_write_attribute
 _srcml_write_string
 _srcml_memory_free
+
+
+# libsrcml 1.1:
+
+# i've been including these since the first emscripten build:
+_srcml_unit_get_src
+_srcml_unit_get_src_size
+
+# new functions:
+_srcml_unit_get_namespace_uri
+_srcml_unit_get_namespace_prefix
+_srcml_unit_get_namespace_size
+_srcml_unit_get_prefix_from_uri
+_srcml_unit_get_uri_from_prefix
+_srcml_add_attribute
+_srcml_get_attribute_size
+_srcml_get_attribute_prefix
+_srcml_get_attribute_name
+_srcml_get_attribute_value
+_srcml_archive_add_attribute
+_srcml_archive_get_attribute_size
+_srcml_archive_get_attribute_prefix
+_srcml_archive_get_attribute_name
+_srcml_archive_get_attribute_value
+_srcml_unit_register_namespace
+_srcml_unit_add_attribute
+_srcml_unit_get_attribute_size
+_srcml_unit_get_attribute_prefix
+_srcml_unit_get_attribute_name
+_srcml_unit_get_attribute_value
+_srcml_append_transform_srcql_attribute
+_srcml_append_transform_srcql
+_srcml_append_transform_srcql_element
